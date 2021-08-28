@@ -505,7 +505,6 @@ if build "libvpx"; then
   build_done "libvpx"
 fi
 CONFIGURE_OPTIONS+=("--enable-libvpx")
-CONFIGURE_OPTIONS+=("--enable-vp9-highbitdepth")
 
 if command_exists "meson"; then
   if build "libdav1d"; then
