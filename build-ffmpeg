@@ -282,6 +282,10 @@ if ! command_exists "python"; then
   echo "Python command not found. Lv2 filter will not be available."
 fi
 
+if ! command_exists "python3"; then
+  echo "Python 3 not found. libdav1d, the High Speed AV1 Decoder, will not be available without Python 3."
+fi
+
 ##
 ## build tools
 ##
@@ -410,6 +414,28 @@ if build "cmake"; then
   build_done "cmake"
 fi
 
+if build "ninja"; then
+  download "https://github.com/ninja-build/ninja/archive/refs/tags/v1.10.2.tar.gz"
+  execute cmake -Bbuild-cmake -H.
+  execute cmake --build build-cmake
+  execute cmake --install ./build-cmake/
+  build_done "ninja"
+fi
+
+if command_exists "python3"; then
+  if build "meson"; then
+    download "https://files.pythonhosted.org/packages/dd/01/3dba211a922c371044baa3ade48f3021e9b67e83c07b397f8eeeea99d3a6/meson-0.59.1.tar.gz"
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+      execute cp -s ${PACKAGES}/meson-0.59.1/meson.py /opt/local/bin/meson
+      execute chmod +x /opt/local/bin/meson
+    else
+      execute cp -s ${PACKAGES}/meson-0.59.1/meson.py /usr/local/bin/meson
+      execute chmod +x /usr/local/bin/meson
+    fi
+    build_done "meson"
+  fi
+fi
+
 if ! $MACOS_M1; then
   if build "svtav1"; then
     download "https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/master/SVT-AV1-master.tar.gz"
@@ -450,7 +476,7 @@ if $NONFREE_AND_GPL; then
     download "https://github.com/videolan/x265/archive/Release_3.5.tar.gz" "x265-3.5.tar.gz"
     cd build/linux || exit
 
-    execute cmake -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DENABLE_SHARED=off -DBUILD_SHARED_LIBS=OFF ../../source
+    execute cmake -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DHIGH_BIT_DEPTH=ON -DENABLE_SHARED=off -DBUILD_SHARED_LIBS=OFF ../../source
     execute make -j $MJOBS
     execute make install
 
@@ -479,6 +505,20 @@ if build "libvpx"; then
   build_done "libvpx"
 fi
 CONFIGURE_OPTIONS+=("--enable-libvpx")
+CONFIGURE_OPTIONS+=("--enable-vp9-highbitdepth")
+
+if command_exists "meson"; then
+  if build "libdav1d"; then
+    download "https://code.videolan.org/videolan/dav1d/-/archive/0.9.1/dav1d-0.9.1.tar.gz"
+
+    execute meson . --prefix="${WORKSPACE}" -Denable_tools=false --Denable-tests=false --default-library=static 
+    execute ninja
+    execute meson install
+
+    build_done "libdav1d"
+  fi
+  CONFIGURE_OPTIONS+=("--enable-libdav1d")
+fi
 
 if $NONFREE_AND_GPL; then
   if build "xvidcore"; then
