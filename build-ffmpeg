@@ -511,7 +511,9 @@ if command_exists "meson"; then
   if build "libdav1d"; then
     download "https://code.videolan.org/videolan/dav1d/-/archive/0.9.1/dav1d-0.9.1.tar.gz"
 
-    execute meson . --prefix="${WORKSPACE}" --default-library=static
+    execute mkdir build
+    execute cd build
+    execute meson .. --prefix="${WORKSPACE}" --default-library=static
     execute ninja
     execute meson install
 
