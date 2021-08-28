@@ -415,7 +415,7 @@ if build "cmake"; then
 fi
 
 if build "ninja"; then
-  download "https://github.com/ninja-build/ninja/archive/refs/tags/v1.10.2.tar.gz"
+  download "https://github.com/ninja-build/ninja/archive/refs/tags/v1.10.2.tar.gz" "ninja-1.10.2.tar.gz"
   execute cmake -Bbuild-cmake -H.
   execute cmake --build build-cmake
   execute cmake --install ./build-cmake/
