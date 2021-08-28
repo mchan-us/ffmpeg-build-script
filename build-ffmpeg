@@ -426,8 +426,8 @@ if command_exists "python3"; then
   if build "meson"; then
     download "https://files.pythonhosted.org/packages/dd/01/3dba211a922c371044baa3ade48f3021e9b67e83c07b397f8eeeea99d3a6/meson-0.59.1.tar.gz"
     if [[ "$OSTYPE" == "darwin"* ]]; then
-      execute cp -s ${PACKAGES}/meson-0.59.1/meson.py /opt/local/bin/meson
-      execute chmod +x /opt/local/bin/meson
+      execute ln -s ${PACKAGES}/meson-0.59.1/meson.py /usr/local/bin/meson
+      execute chmod +x /usr/local/bin/meson
     else
       execute cp -s ${PACKAGES}/meson-0.59.1/meson.py /usr/local/bin/meson
       execute chmod +x /usr/local/bin/meson
