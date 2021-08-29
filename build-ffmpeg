@@ -512,7 +512,7 @@ if command_exists "meson"; then
 
     execute mkdir build
     cd build || exit
-    execute meson .. --prefix="${WORKSPACE}" --default-library=static
+    execute meson .. --prefix="${WORKSPACE}" --default-library=static --libdir="${WORKSPACE}/lib"
     execute ninja
     execute meson install
 
