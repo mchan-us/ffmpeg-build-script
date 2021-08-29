@@ -14,7 +14,7 @@ LDEXEFLAGS=""
 EXTRALIBS="-ldl -lpthread -lm -lz"
 MACOS_M1=false
 CONFIGURE_OPTIONS=()
-NONFREE_AND_GPL=false
+NONFREE_AND_GPL=true
 
 # Check for Apple Silicon
 if [[ ("$(uname -m)" == "arm64") && ("$OSTYPE" == "darwin"*) ]]; then
@@ -184,13 +184,13 @@ cleanup() {
 usage() {
   echo "Usage: $PROGNAME [OPTIONS]"
   echo "Options:"
-  echo "  -h, --help                     Display usage information"
-  echo "      --version                  Display version information"
-  echo "  -b, --build                    Starts the build process"
-  echo "      --enable-gpl-and-non-free  Enable GPL and non-free codecs  - https://ffmpeg.org/legal.html"
-  echo "  -c, --cleanup                  Remove all working dirs"
-  echo "      --full-static              Build a full static FFmpeg binary (eg. glibc, pthreads etc...) **only Linux**"
-  echo "                                 Note: Because of the NSS (Name Service Switch), glibc does not recommend static links."
+  echo "  -h, --help                      Display usage information"
+  echo "      --version                   Display version information"
+  echo "  -b, --build                     Starts the build process"
+  echo "      --disable-gpl-and-non-free  Disable GPL and non-free codecs - https://ffmpeg.org/legal.html"
+  echo "  -c, --cleanup                   Remove all working dirs"
+  echo "      --full-static               Build a full static FFmpeg binary (eg. glibc, pthreads etc...) **only Linux**"
+  echo "                                  Note: Because of the NSS (Name Service Switch), glibc does not recommend static links."
   echo ""
 }
 
@@ -212,7 +212,9 @@ while (($# > 0)); do
     if [[ "$1" == "--build" || "$1" =~ '-b' ]]; then
       bflag='-b'
     fi
-    if [[ "$1" == "--enable-gpl-and-non-free" ]]; then
+    if [[ "$1" == "--disable-gpl-and-non-free" ]]; then
+      NONFREE_AND_GPL=false
+    else
       CONFIGURE_OPTIONS+=("--enable-nonfree")
       CONFIGURE_OPTIONS+=("--enable-gpl")
       NONFREE_AND_GPL=true
@@ -279,7 +281,7 @@ if ! command_exists "curl"; then
 fi
 
 if ! command_exists "python"; then
-  echo "Python command not found. Lv2 filter will not be available."
+  echo "Python 2 not found. Lv2 filter will not be available."
 fi
 
 if ! command_exists "python3"; then
@@ -751,6 +753,12 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
         build_done "vaapi"
       fi
       CONFIGURE_OPTIONS+=("--enable-vaapi")
+    fi
+    if library_exists "vdpau"; then
+      if build "vdpau"; then
+        build_done "vdpau";
+      fi
+      CONFIGURE_OPTIONS+=("--enable-vdpau")
     fi
   fi
 fi
