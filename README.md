@@ -1,4 +1,4 @@
-[![build test](https://github.com/mchan-us/ffmpeg-build-script/workflows/build%20test/badge.svg?branch=master)](https://github.com/markus-perl/ffmpeg-build-script/actions)
+[![build test](https://github.com/mchan-us/ffmpeg-build-script/workflows/build%20test/badge.svg?branch=master)](https://github.com/mchan-us/ffmpeg-build-script/actions)
 
 ![FFmpeg build script](https://raw.github.com/mchan-us/ffmpeg-build-script/master/ffmpeg-build-script.png)
 
@@ -245,8 +245,8 @@ Options:
   below: https://sourceware.org/glibc/wiki/FAQ#Even_statically_linked_programs_need_some_shared_libraries_which_is_not_acceptable_for_me.__What_can_I_do.3F
 
 - The libnpp in the CUDA SDK cannot be statically linked.
-- Vaapi cannot be statically linked.
 - VDPAU cannot be statically linked.
+- Vaapi cannot be statically linked.
 
 Contact
 -------
@@ -722,13 +722,3 @@ Install these binaries to your /usr/local/bin folder? Existing binaries will be 
 Password:
 Done. FFmpeg is now installed to your system.
 ```
-
-Other Projects Of Mine
-------------
-
-- [Pushover CLI Client](https://github.com/markus-perl/pushover-cli)
-- [Gender API](https://gender-api.com): [Genderize A Name](https://gender-api.com)
-- [Gender API Client PHP](https://github.com/markus-perl/gender-api-client)
-- [Gender API Client NPM](https://github.com/markus-perl/gender-api-client-npm)
-- [Genderize Names](https://www.youtube.com/watch?v=2SLIAguaygo)
-- [Genderize API](https://gender-api.io)
