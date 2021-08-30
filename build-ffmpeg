@@ -387,7 +387,7 @@ fi
 
 if build "nasm"; then
   #download "https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.xz"
-  download "https://fossies.org/linux/misc/nasm-2.15.05.tar.xz"
+  download "https://mirrors.edge.kernel.org/ubuntu/pool/universe/n/nasm/nasm_2.15.05.orig.tar.xz"
   execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
   execute make all -j $MJOBS
   execute make install
