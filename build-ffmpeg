@@ -390,7 +390,7 @@ if build "nasm"; then
   download "https://github.com/netwide-assembler/nasm/archive/refs/tags/nasm-2.15.05.tar.gz"
   execute ./autogen.sh
   execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
-  execute make -j $MJOBS
+  execute make all -j $MJOBS
   execute make install
   build_done "nasm"
 fi
