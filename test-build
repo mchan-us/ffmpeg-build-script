@@ -79,7 +79,7 @@ library_exists() {
 }
 
 lib_exists() {
-  STORM="/lib/x86_64-linux-gnu/${1}.so*"
+  STORM="/lib/x86_64-linux-gnu/${1}"
   if ! [ -e $STORM ]; then
     return 1
   fi
@@ -637,13 +637,13 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
   # Vaapi doesn't work well with static links FFmpeg.
   if [ -z "$LDEXEFLAGS" ]; then
     # If the libva development SDK is installed, enable vaapi.
-    if lib_exists "libva"; then
+    if lib_exists "libva.so.2"; then
       if build "vaapi"; then
         build_done "vaapi"
       fi
       CONFIGURE_OPTIONS+=("--enable-vaapi")
     fi
-    if lib_exists "libvdpau"; then
+    if lib_exists "libvdpau.so.1"; then
       if build "vdpau"; then
         build_done "vdpau";
       fi
