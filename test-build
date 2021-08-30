@@ -294,7 +294,8 @@ fi
 if build "nasm"; then
   #download "https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.xz"
   download "https://github.com/netwide-assembler/nasm/archive/refs/tags/nasm-2.15.05.tar.gz"
-  execute ./configure.ac --prefix="${WORKSPACE}" --disable-shared --enable-static
+  execute ./autogen.sh
+  execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
   execute make -j $MJOBS
   execute make install
   build_done "nasm"
