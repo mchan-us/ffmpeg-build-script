@@ -78,6 +78,15 @@ library_exists() {
   return 0
 }
 
+lib_exists() {
+  STORM="/lib/x86_64-linux-gnu/${1}.so*"
+  if ! [ -e $STORM ]; then
+    return 1
+  fi
+
+  return 0
+}
+
 build_done() {
   echo "Done!"
 }
@@ -283,7 +292,8 @@ if build "yasm"; then
 fi
 
 if build "nasm"; then
-  download "https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.xz"
+  #download "https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/nasm-2.15.05.tar.xz"
+  download "https://github.com/netwide-assembler/nasm/archive/refs/tags/nasm-2.15.05.tar.gz"
   execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
   execute make -j $MJOBS
   execute make install
@@ -540,6 +550,10 @@ if $NONFREE_AND_GPL; then
   CONFIGURE_OPTIONS+=("--enable-libfdk-aac")
 fi
 
+##
+## image library
+##
+
 if build "libtiff"; then
   download "https://download.osgeo.org/libtiff/tiff-4.3.0.tar.gz"
   execute ./configure --prefix="${WORKSPACE}" --disable-shared --enable-static
@@ -557,10 +571,6 @@ if build "libpng"; then
   execute make install
   build_done "libpng"
 fi
-
-##
-## image library
-##
 
 if build "libwebp"; then
   download "https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.2.0.tar.gz" "libwebp-1.2.0.tar.gz"
@@ -627,13 +637,13 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
   # Vaapi doesn't work well with static links FFmpeg.
   if [ -z "$LDEXEFLAGS" ]; then
     # If the libva development SDK is installed, enable vaapi.
-    if library_exists "libva"; then
+    if lib_exists "libva"; then
       if build "vaapi"; then
         build_done "vaapi"
       fi
       CONFIGURE_OPTIONS+=("--enable-vaapi")
     fi
-    if library_exists "vdpau"; then
+    if lib_exists "libvdpau"; then
       if build "vdpau"; then
         build_done "vdpau";
       fi
@@ -648,16 +658,17 @@ fi
 
 build "ffmpeg"
 download "https://github.com/FFmpeg/FFmpeg/archive/refs/heads/release/4.4.tar.gz" "FFmpeg-release-4.4.tar.gz"
+
+echo ""
+echo "FFmpeg Building Configure Options:"
+echo '"${CONFIGURE_OPTIONS[@]}" --disable-debug --disable-doc --disable-shared --enable-pthreads --enable-static --enable-small --enable-version3 --extra-cflags="${CFLAGS}" --extra-ldexeflags="${LDEXEFLAGS}" --extra-ldflags="${LDFLAGS}" --extra-libs="${EXTRALIBS}" --pkgconfigdir="$WORKSPACE/lib/pkgconfig" --pkg-config-flags="--static" --prefix="${WORKSPACE}"'
+echo ""
+
 # shellcheck disable=SC2086
 execute ./configure "${CONFIGURE_OPTIONS[@]}" --disable-debug --disable-doc --disable-shared --enable-pthreads --enable-static --enable-small --enable-version3 --extra-cflags="${CFLAGS}" --extra-ldexeflags="${LDEXEFLAGS}" --extra-ldflags="${LDFLAGS}" --extra-libs="${EXTRALIBS}" --pkgconfigdir="$WORKSPACE/lib/pkgconfig" --pkg-config-flags="--static" --prefix="${WORKSPACE}"
 
 execute make -j $MJOBS
 execute make install
-
-INSTALL_FOLDER="/usr/bin"
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  INSTALL_FOLDER="/usr/local/bin"
-fi
 
 echo ""
 echo "Testing done. No change occurred."
