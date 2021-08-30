@@ -405,7 +405,7 @@ if build "libvpx"; then
 fi
 CONFIGURE_OPTIONS+=("--enable-libvpx")
 
-if command_exists "meson"; then
+if command_exists "python3"; then
   if build "libdav1d"; then
     download "https://code.videolan.org/videolan/dav1d/-/archive/0.9.1/dav1d-0.9.1.tar.gz"
 
