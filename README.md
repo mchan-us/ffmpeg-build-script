@@ -66,12 +66,13 @@ $ ./build-ffmpeg --build
 * `srt`: Secure Reliable Transport
 * `webp`: Image format both lossless and lossy
 
-### HardwareAccel
+### Supported Hardware Accels
 
 * `nv-codec`: [NVIDIA's GPU accelerated video codecs](https://devblogs.nvidia.com/nvidia-ffmpeg-transcoding-guide/).
   These encoders/decoders will only be available if a CUDA installation was found while building the binary.
   Follow [these](#Cuda-installation) instructions for installation. Supported codecs in nvcodec:
     * Decoders
+        * AV1 `av1_cuvid`
         * H264 `h264_cuvid`
         * H265 `hevc_cuvid`
         * Motion JPEG `mjpeg_cuvid`
@@ -82,8 +83,11 @@ $ ./build-ffmpeg --build
         * VP8 `vp8_cuvid`
         * VP9 `vp9_cuvid`
     * Encoders
+        * H264 `h264_nvenc`
+        * H264 `nvenc`
         * H264 `nvenc_h264`
         * H265 `nvenc_hevc`
+        * H265 `hevc_nvenc`
 * `VDPAU`: Video Decode and Presentation API for Unix. These encoders/decoders will only be
   available if a libvdpau driver installation was found while building the binary. Follow [these](#VDPAU-installation)
   instructions for installation. Supported codecs in VDPAU:

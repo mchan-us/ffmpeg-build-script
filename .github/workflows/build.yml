@@ -8,6 +8,102 @@ on:
     branches: [ master ]
 
 jobs:
+  test-linux:
+    name: test in native linux
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: install libvdpau-dev, libva-dev
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvdpau-dev libva-dev pkg-config
+
+      - name: build ffmpeg
+        run: |
+          while sleep 300; do echo "=====[ $SECONDS seconds still running ]====="; done &
+          SKIPINSTALL=yes VERBOSE=yes ./test-build --build
+          kill %1
+      - name: clean up
+        run: |
+          ./test-build --cleanup
+
+  test-macos:
+    name: test in native macOS
+    runs-on: macos-10.15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: build ffmpeg
+        run: |
+          while sleep 300; do echo "=====[ $SECONDS seconds still running ]====="; done &
+          SKIPINSTALL=yes VERBOSE=yes ./test-build --build
+          kill %1
+      - name: clean up
+        run: |
+          ./test-build --cleanup
+
+  test-docker:
+    name: test in docker
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: pull base image
+        id: ubuntu_pull
+        run: |
+          docker pull ubuntu:20.04
+      - name: run if ubuntu_pull failed
+        if: failure() && steps.ubuntu_pull.outcome == 'failure'
+        run: |
+          docker pull ubuntu:20.04
+      - name: build ffmpeg
+        run: |
+          docker build -t ffmpeg:ubuntu -f test.Dockerfile .
+
+  test-cuda-ubuntu-docker:
+    name: test in ubuntu docker with cuda
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: pull base image
+        id: cuda_ubuntu_pull
+        run: |
+          docker pull nvidia/cuda:11.1-devel-ubuntu20.04
+          docker pull ubuntu:20.04
+      - name: run if cuda_ubuntu_pull failed
+        if: failure() && steps.cuda_ubuntu_pull.outcome == 'failure'
+        run: |
+          docker pull nvidia/cuda:11.1-devel-ubuntu20.04
+          docker pull ubuntu:20.04
+      - name: build ffmpeg
+        run: |
+          docker build -t ffmpeg:cuda-ubuntu -f cuda-ubuntu-test.dockerfile .
+
+  test-full-static:
+    name: tests full static build in docker
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: pull base image
+        id: cuda_ubuntu_pull
+        run: |
+          docker pull nvidia/cuda:11.1-devel-ubuntu20.04
+      - name: run if cuda_ubuntu_pull failed
+        if: failure() && steps.cuda_ubuntu_pull.outcome == 'failure'
+        run: |
+          docker pull nvidia/cuda:11.1-devel-ubuntu20.04
+      - name: build ffmpeg
+        run: |
+          docker build -t ffmpeg:cuda-static -f full-static-test.dockerfile .
+
   build-linux:
     name: build in native linux
     runs-on: ubuntu-20.04
@@ -15,15 +111,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: install libva-dev
+      - name: install libvdpau-dev, libva-dev
         run: |
           sudo apt-get update
-          sudo apt-get install -y libva-dev
+          sudo apt-get install -y libvdpau-dev libva-dev pkg-config
 
       - name: build ffmpeg
         run: |
           while sleep 300; do echo "=====[ $SECONDS seconds still running ]====="; done &
-          SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build --enable-gpl-and-non-free
+          SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build
           kill %1
       - name: check shared library
         run: |
@@ -45,7 +141,7 @@ jobs:
       - name: build ffmpeg
         run: |
           while sleep 300; do echo "=====[ $SECONDS seconds still running ]====="; done &
-          SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build --enable-gpl-and-non-free
+          SKIPINSTALL=yes VERBOSE=yes ./build-ffmpeg --build
           kill %1
       - name: check shared library
         run: |

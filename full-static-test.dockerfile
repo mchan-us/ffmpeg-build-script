@@ -14,20 +14,5 @@ COPY ./build-ffmpeg /app/build-ffmpeg
 
 RUN AUTOINSTALL=yes /app/build-ffmpeg --build --full-static --enable-gpl-and-non-free
 
-# Check shared library
-RUN ! ldd /app/workspace/bin/ffmpeg
-RUN ! ldd /app/workspace/bin/ffprobe
-RUN ! ldd /app/workspace/bin/ffplay
-
-FROM scratch
-
-ENV NVIDIA_VISIBLE_DEVICES all
-ENV NVIDIA_DRIVER_CAPABILITIES compute,utility,video
-
-# Copy ffmpeg
-COPY --from=build /app/workspace/bin/ffmpeg /ffmpeg
-COPY --from=build /app/workspace/bin/ffprobe /ffprobe
-COPY --from=build /app/workspace/bin/ffplay /ffplay
-
-CMD         ["--help"]
-ENTRYPOINT  ["/ffmpeg"]
+CMD         ["-c","exit"]
+ENTRYPOINT  ["/bin/bash]
