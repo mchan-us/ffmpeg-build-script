@@ -4,7 +4,7 @@
 # LICENSE: https://github.com/mchan-us/ffmpeg-build-script/blob/master/LICENSE
 
 PROGNAME=$(basename "$0")
-VERSION=1.29
+VERSION=1.29-us
 CWD=$(pwd)
 PACKAGES="$CWD/packages"
 WORKSPACE="$CWD/workspace"
@@ -783,7 +783,7 @@ download "https://github.com/FFmpeg/FFmpeg/archive/refs/heads/release/4.4.tar.gz
 
 echo ""
 echo "FFmpeg Building Configure Options:"
-echo '"${CONFIGURE_OPTIONS[@]}" --disable-debug --disable-doc --disable-shared --enable-pthreads --enable-static --enable-small --enable-version3 --extra-cflags="${CFLAGS}" --extra-ldexeflags="${LDEXEFLAGS}" --extra-ldflags="${LDFLAGS}" --extra-libs="${EXTRALIBS}" --pkgconfigdir="$WORKSPACE/lib/pkgconfig" --pkg-config-flags="--static" --prefix="${WORKSPACE}"'
+echo "${CONFIGURE_OPTIONS[@]}" --disable-debug --disable-doc --disable-shared --enable-pthreads --enable-static --enable-small --enable-version3 --extra-cflags="${CFLAGS}" --extra-ldexeflags="${LDEXEFLAGS}" --extra-ldflags="${LDFLAGS}" --extra-libs="${EXTRALIBS}" --pkgconfigdir="$WORKSPACE/lib/pkgconfig" --pkg-config-flags="--static" --prefix="${WORKSPACE}"
 echo ""
 
 # shellcheck disable=SC2086

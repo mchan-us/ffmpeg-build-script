@@ -25,7 +25,7 @@ if ! command_exists "curl"; then
     exit 1
 fi
 
-echo "ffmpeg-build-script-downloader v0.1"
+echo "ffmpeg-build-script-downloader v0.1-us"
 echo "========================================="
 echo ""
 
